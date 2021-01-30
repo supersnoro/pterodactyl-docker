@@ -24,7 +24,7 @@ fi
 sudo docker pull lucaslorentz/caddy-docker-proxy:2.3
 
 # Stop+remove reverse proxy if it was running
-if sudo docker container inspect caddy-caddy-reverse-proxy >/dev/null 2>&1
+if sudo docker container inspect caddy-reverse-proxy >/dev/null 2>&1
 then
     sudo docker stop caddy-reverse-proxy
     sudo docker rm caddy-reverse-proxy
