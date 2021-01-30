@@ -1,11 +1,5 @@
 version: '3.7'
 
-networks:
-  caddy-reverse-proxy:
-    external: true
-  panel:
-    internal: true
-
 services:
   panel:
     image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
@@ -23,32 +17,12 @@ services:
       - DB_USERNAME=${MYSQL_USER}
       - DB_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - ${DATA_DIR}/panel:/data
+      - ${DATA_DIR}/panel/var:/app/var
+      - ${DATA_DIR}/panel/logs:/app/log
     labels:
       caddy: ${PANEL_DOMAIN}
       caddy.reverse_proxy: "{{upstreams 80}}"
       caddy.tls: "internal"
-  worker:
-    image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
-    restart: unless-stopped
-    command: p:worker
-    env_file:
-      - .env
-    networks:
-      - panel
-    volumes:
-      - ${DATA_DIR}/panel:/data
-  cron:
-    image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
-    restart: unless-stopped
-    command: p:cron
-    env_file:
-      - .env
-    networks:
-      - panel
-    volumes:
-      - ${DATA_DIR}/panel:/data
-
   mysql:
     image: mariadb:10.5
     restart: unless-stopped
@@ -63,3 +37,9 @@ services:
     restart: always
     networks:
       - panel
+
+networks:
+  caddy-reverse-proxy:
+    external: true
+  panel:
+    internal: true
