@@ -12,46 +12,29 @@ We’ll be using docker, docker-compose and CloudFlare for DNS challenges to gen
 
 ### Requirements
 - Basic command line knowledge
-- A domain behind Cloudflare
-- Two or more servers
 - [Docker](https://docs.docker.com/engine/install/ubuntu/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-
-### Setting up Cloudflare
-
-<b>Change settings</b><br />
-Login into your CloudFlare account and navigate to the domain you'll be using for this guide. Click on `SSL/TLS` tab and make sure your `encryption mode` is set to `Full`. Then navigate to `Edge Certificates` and enable `Always Use HTTPS`.
-
-<b>Set up DNS</b><br />
-Navigate to `DNS` tab and create `A record` for your panel pointing to server A and second `A record` pointing to server B, your daemon's server. Make sure both of records are proxied through Cloudflare. (The orange cloud should be on).
-
 
 # Installation
 **Notes before installation**
 - By default the guide assumes you're cloning this repository into `/srv/docker/` directory! 
 - It's not recommended to run panel and daemon on the same server! While this may be possible, it may cause issues.
 
-### Setting up Traefik
+### Setting up caddy-docker-proxy
 <b>Clone repository</b><br />
 Start by cloning this repository into `/srv/docker/`. 
 ```
-git clone https://github.com/EdyTheCow/pterodactyl-docker.git
+git clone https://github.com/supersnoro/pterodactyl-docker.git
 ```
 
 <b>Set variables</b><br />
-Navigate to `_base/compose/` directory, rename .env.example to .env and change these variables:
+Navigate to `caddy-reverse-proxy` directory and modify `test@example.com` to your email in the script.
 
-| Variable | Example | Description |
-|-|:-:|-|
-| CF_API_EMAIL | your@email.com | Your CloudFlare's account email |
-| CF_API_KEY | - | Go to your CloudFlare's profile and navigate to "API Tokens". Copy the "Global API Key" |
+Executing the shell script will create a `caddy-reverse-proxy` container running with the `caddy-reverse-proxy` network that is used in the docker-compose files.
 
-<b>Start traefik container</b><br />
- ```
-docker-compose up -d traefik
- ```
+This container is meant to act as a system-wide proxy, hence why it's ran in a separate script.
 
-### Panel - (server A)
+### Panel
 <b>Set variables</b><br />
 Navigate to `panel/compose/` directory and rename .env.example to .env. The most important variables to change right now are:
 
