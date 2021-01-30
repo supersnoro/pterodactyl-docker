@@ -7,7 +7,7 @@ networks:
 services:
 
   daemon:
-    image: ccarney16/pterodactyl-daemon:${DAEMON_VERSION}
+    image: ghcr.io/pterodactyl/wings:${DAEMON_VERSION}
     ports:
       - 2022:2022
     networks:
