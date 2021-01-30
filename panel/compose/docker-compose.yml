@@ -7,18 +7,9 @@ networks:
     internal: true
 
 services:
-  mysql:
-    image: mariadb:10.5
-    restart: always
-    networks:
-      - panel
-    env_file:
-      - .env
-    volumes:
-      - ${DATA_DIR}/mariadb:/var/lib/mysql
   panel:
     image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
-    restart: always
+    restart: unless-stopped
     networks:
       - panel
       - caddy-reverse-proxy
@@ -37,10 +28,9 @@ services:
       caddy: ${PANEL_DOMAIN}
       caddy.reverse_proxy: "{{upstreams 80}}"
       caddy.tls: "internal"
-
   worker:
     image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
-    restart: always
+    restart: unless-stopped
     command: p:worker
     env_file:
       - .env
@@ -48,10 +38,9 @@ services:
       - panel
     volumes:
       - ${DATA_DIR}/panel:/data
-
   cron:
-    image: ccarney16/pterodactyl-panel:${PANEL_VERSION}
-    restart: always
+    image: ghcr.io/pterodactyl/panel:${PANEL_VERSION}
+    restart: unless-stopped
     command: p:cron
     env_file:
       - .env
@@ -60,6 +49,15 @@ services:
     volumes:
       - ${DATA_DIR}/panel:/data
 
+  mysql:
+    image: mariadb:10.5
+    restart: unless-stopped
+    networks:
+      - panel
+    env_file:
+      - .env
+    volumes:
+      - ${DATA_DIR}/mariadb:/var/lib/mysql
   cache:
     image: redis:alpine
     restart: always
