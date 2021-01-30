@@ -1,7 +1,7 @@
 version: '3.7'
 
 networks:
-  pterodactyl:
+  caddy-reverse-proxy:
     external: true
 
 services:
@@ -11,7 +11,7 @@ services:
     ports:
       - 2022:2022
     networks:
-      - pterodactyl
+      - caddy-reverse-proxy
     privileged: true
     restart: always
     working_dir: ${DATA_DIR_DAEMON}
