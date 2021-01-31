@@ -5,7 +5,6 @@ networks:
     external: true
 
 services:
-
   wing:
     image: ghcr.io/pterodactyl/wings:${WING_VERSION}
     ports:
@@ -16,14 +15,15 @@ services:
     restart: always
     working_dir: ${DATA_DIR_WING}
     environment:
-      - TZ=${WING_TIMEZONE:-CET}
+      - TZ=${WING_TIMEZONE:-UTC}
     volumes:
       - ${DATA_DIR_WING}:${DATA_DIR_WING}
       - ${DATA_DIR}/wing/config:/etc/pterodactyl
+      - ${DATA_DIR}/wing/log:/var/log/pterodactyl
       - /tmp/pterodactyl:/tmp/pterodactyl
       - ${WING_DOCKER_ROOT:-/var/lib/docker}:${WING_DOCKER_ROOT:-/var/lib/docker}
       - ${WING_DOCKER_SOCKET:-/var/run/docker.sock}:${WING_DOCKER_SOCKET:-/var/run/docker.sock}
+      - /etc/ssl/certs:/etc/ssl/certs:ro
     labels:
-      - "traefik.http.routers.wing.rule=Host(`${WING_DOMAIN}`)"
-      - "traefik.http.routers.wing.tls=true"
-      - "traefik.http.services.wing.loadbalancer.server.port=443"
+      caddy: ${WING_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
