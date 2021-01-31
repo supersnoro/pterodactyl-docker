@@ -6,24 +6,24 @@ networks:
 
 services:
 
-  daemon:
-    image: ghcr.io/pterodactyl/wings:${DAEMON_VERSION}
+  wing:
+    image: ghcr.io/pterodactyl/wings:${WING_VERSION}
     ports:
       - 2022:2022
     networks:
       - caddy-reverse-proxy
     privileged: true
     restart: always
-    working_dir: ${DATA_DIR_DAEMON}
+    working_dir: ${DATA_DIR_WING}
     environment:
-      - TZ=${DAEMON_TIMEZONE:-CET}
+      - TZ=${WING_TIMEZONE:-CET}
     volumes:
-      - ${DATA_DIR_DAEMON}:${DATA_DIR_DAEMON}
-      - ${DATA_DIR}/daemon/config:/etc/pterodactyl
+      - ${DATA_DIR_WING}:${DATA_DIR_WING}
+      - ${DATA_DIR}/wing/config:/etc/pterodactyl
       - /tmp/pterodactyl:/tmp/pterodactyl
-      - ${DAEMON_DOCKER_ROOT:-/var/lib/docker}:${DAEMON_DOCKER_ROOT:-/var/lib/docker}
-      - ${DAEMON_DOCKER_SOCKET:-/var/run/docker.sock}:${DAEMON_DOCKER_SOCKET:-/var/run/docker.sock}
+      - ${WING_DOCKER_ROOT:-/var/lib/docker}:${WING_DOCKER_ROOT:-/var/lib/docker}
+      - ${WING_DOCKER_SOCKET:-/var/run/docker.sock}:${WING_DOCKER_SOCKET:-/var/run/docker.sock}
     labels:
-      - "traefik.http.routers.daemon.rule=Host(`${DAEMON_DOMAIN}`)"
-      - "traefik.http.routers.daemon.tls=true"
-      - "traefik.http.services.daemon.loadbalancer.server.port=443"
+      - "traefik.http.routers.wing.rule=Host(`${WING_DOMAIN}`)"
+      - "traefik.http.routers.wing.tls=true"
+      - "traefik.http.services.wing.loadbalancer.server.port=443"
