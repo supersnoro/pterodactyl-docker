@@ -10,7 +10,7 @@ echo "Setting up caddy reverse proxy"
 # Ensure the caddy-reverse-proxy network exists (so that the reverse proxy can reach other services)
 if ! sudo docker network inspect caddy-reverse-proxy >/dev/null 2>&1
 then
-    sudo docker network create caddy-reverse-proxy -d bridge --attachable
+    sudo docker network create --driver bridge --subnet 172.30.0.0/16 --attachable caddy-reverse-proxy
 fi
 
 # Ensure the volume to store the certs exists issued by the reverse proxy
