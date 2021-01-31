@@ -5,10 +5,10 @@ For switching traefik to [lucaslorentz/caddy-docker-proxy](https://github.com/lu
 </p>
 
 # About
-There’s a lack of information about setting up and running Pterodactyl Panel inside docker using Traefik as reverse proxy. This guide focuses on the fastest and easiest way to do that! 
+There’s a lack of information about setting up and running Pterodactyl Panel inside docker using a reverse proxy. This guide focuses on one of the ways to do that. 
 
 # Getting Started
-We’ll be using docker, docker-compose and CloudFlare for DNS challenges to generate certificates. DNS challenges allow wildcard certificates allowing you to add any subdomains on the go. If you prefer using something else, have a look at [Traefik's Docs](https://docs.traefik.io/https/acme/).
+We’ll be using docker, docker-compose and [lucaslorentz/caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy) to generate certificates.
 
 ### Requirements
 - Basic command line knowledge
@@ -18,7 +18,6 @@ We’ll be using docker, docker-compose and CloudFlare for DNS challenges to gen
 # Installation
 **Notes before installation**
 - By default the guide assumes you're cloning this repository into `/srv/docker/` directory! 
-- It's not recommended to run panel and wing on the same server! While this may be possible, it may cause issues.
 
 ### Setting up caddy-docker-proxy
 <b>Clone repository</b><br />
@@ -36,7 +35,7 @@ This container is meant to act as a system-wide proxy, hence why it's ran in a s
 
 ### Panel
 <b>Set variables</b><br />
-Navigate to `panel/compose/` directory and rename .env.example to .env. The most important variables to change right now are:
+Navigate to `panel/compose/` directory and rename .env-example to .env. The most important variables to change right now are:
 
 | Variable | Example | Description |
 |-|:-:|-|
@@ -58,11 +57,6 @@ Allow around two minutes to be fully initialized.
 docker-compose up -d panel
  ```
 
-<b>Start panel's worker and cron containers</b><br />
- ```
-docker-compose up -d worker cron
- ```
-
 <b>Create a new user</b><br />
  ```
 docker-compose run --rm panel php artisan p:user:make
@@ -81,30 +75,42 @@ Navigate to admin control panel and add a new `Location`. Then navigate to `Node
 
 Rest of the settings can be set as you desire.
 
-### Wing - (Server B)
+### Wing
 
-Follow the same steps from `Setting up Traefik` section on your second server for wing.
+Follow the same steps from [`Setting up caddy-docker-proxy`](#Setting-up-caddy-docker-proxy) section on your second server for wing.
 
-<b>Setting variables</b><br />
+<b>Setting variables<b><br/>
 Navigate to `panel/wing/` directory and rename .env.example to .env and change these variables:
 
 | Variable | Example | Description |
 |-|:-:|-|
-| WING_DOMAIN | node.example.com | Enter a domain that's behind CloudFlare |
+| WING_DOMAIN | wing.example.com | Enter the domain you want the reverse proxy to use |
 
-<b>Copying wing's config</b><br />
+<b>Copying wing's config<b><br/>
 Navigate to `PANEL_DOMAIN` and find the node you created earlier. Click on `Configuration` tab and copy the contents into `wing/data/config/config.yml`. Sometimes the `remote` url inside `config.yml` may be set to `http://` change it to `https://`.
 
-<b>Start wing container</b><br />
+<b>Generating the config<b><br/>
+In the same tab as the config, there is an option to get a command to fetch the config via the wings application. If you would rather use this option, run the following:
+```
+docker-compose run --rm wing sh -c '[copied command]'
+```
+
+<b>Start wing container<b><br/>
  ```
 docker-compose up -d wing
  ```
 
-
 # Known issues
-- None
+- If running both the wing container and the panel container on the same host, the panel and wing domain names need to be added as aliases to the `caddy-reverse-proxy` container in the `caddy-reverse-proxy` network like so:
+```
+docker network disconnect caddy-reverse-proxy caddy-reverse-proxy
+docker network connect --alias panel.example.com --alias wing.example.com caddy-reverse-proxy caddy-reverse-proxy
+```
+Be careful not to remove any previously configured aliases.
+
+- Currently the TRUSTED_PROXIES configuration option is set to accept any proxy. It is likely not that bad given that the panel ports are only available to the
+`caddy-reverse-proxy` network, but should probably be addressed.
 
 # Credits
 - Logo created for this project by Wob - [Dribbble.com/wob](https://dribbble.com/wob)
-- Docker images for the panel and wing created by [ccarney16/pterodactyl-docker ](https://github.com/ccarney16/pterodactyl-docker)
 
