@@ -32,6 +32,7 @@ services:
       - .env
     volumes:
       - ${DATA_DIR}/mariadb:/var/lib/mysql
+      - /etc/ssl/certs:/etc/ssl/certs:ro
   cache:
     image: redis:alpine
     restart: always
