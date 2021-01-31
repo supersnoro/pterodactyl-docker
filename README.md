@@ -18,7 +18,7 @@ We’ll be using docker, docker-compose and CloudFlare for DNS challenges to gen
 # Installation
 **Notes before installation**
 - By default the guide assumes you're cloning this repository into `/srv/docker/` directory! 
-- It's not recommended to run panel and daemon on the same server! While this may be possible, it may cause issues.
+- It's not recommended to run panel and wing on the same server! While this may be possible, it may cause issues.
 
 ### Setting up caddy-docker-proxy
 <b>Clone repository</b><br />
@@ -74,30 +74,30 @@ Navigate to admin control panel and add a new `Location`. Then navigate to `Node
 
 | Setting | Set to | Description |
 |-|:-:|-|
-| FQDN | `DAEMON_DOMAIN` | This is your daemon's domain you'll have to specify later in guide. Example: `node.example.com`|
+| FQDN | `WING_DOMAIN` | This is your wing's domain you'll have to specify later in guide. Example: `node.example.com`|
 | Behind Proxy | Behind Proxy | Set this to `Behind Proxy` for Traefik to work properly|
-| Daemon Port | 443 | Change the default port |
-| Daemon Server File Directory | `DATA_DIR_DAEMON` | By default it should be set to `/srv/docker/pterodactyl-docker/daemon/data/daemon/servers`. This setting can be changed if desired and is found in `daemon/compose/.env-example` |
+| Wing Port | 443 | Change the default port |
+| Wing Server File Directory | `DATA_DIR_WING` | By default it should be set to `/srv/docker/pterodactyl-docker/wing/data/wing/servers`. This setting can be changed if desired and is found in `wing/compose/.env-example` |
 
 Rest of the settings can be set as you desire.
 
-### Daemon - (Server B)
+### Wing - (Server B)
 
-Follow the same steps from `Setting up Traefik` section on your second server for daemon.
+Follow the same steps from `Setting up Traefik` section on your second server for wing.
 
 <b>Setting variables</b><br />
-Navigate to `panel/daemon/` directory and rename .env.example to .env and change these variables:
+Navigate to `panel/wing/` directory and rename .env.example to .env and change these variables:
 
 | Variable | Example | Description |
 |-|:-:|-|
-| DAEMON_DOMAIN | node.example.com | Enter a domain that's behind CloudFlare |
+| WING_DOMAIN | node.example.com | Enter a domain that's behind CloudFlare |
 
-<b>Copying daemon's config</b><br />
-Navigate to `PANEL_DOMAIN` and find the node you created earlier. Click on `Configuration` tab and copy the contents into `daemon/data/config/config.yml`. Sometimes the `remote` url inside `config.yml` may be set to `http://` change it to `https://`.
+<b>Copying wing's config</b><br />
+Navigate to `PANEL_DOMAIN` and find the node you created earlier. Click on `Configuration` tab and copy the contents into `wing/data/config/config.yml`. Sometimes the `remote` url inside `config.yml` may be set to `http://` change it to `https://`.
 
-<b>Start daemon container</b><br />
+<b>Start wing container</b><br />
  ```
-docker-compose up -d daemon
+docker-compose up -d wing
  ```
 
 
@@ -106,5 +106,5 @@ docker-compose up -d daemon
 
 # Credits
 - Logo created for this project by Wob - [Dribbble.com/wob](https://dribbble.com/wob)
-- Docker images for the panel and daemon created by [ccarney16/pterodactyl-docker ](https://github.com/ccarney16/pterodactyl-docker)
+- Docker images for the panel and wing created by [ccarney16/pterodactyl-docker ](https://github.com/ccarney16/pterodactyl-docker)
 
