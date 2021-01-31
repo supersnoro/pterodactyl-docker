@@ -43,3 +43,6 @@ networks:
     external: true
   panel:
     internal: true
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
