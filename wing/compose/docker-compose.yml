@@ -11,8 +11,9 @@ services:
       - 2022:2022
     networks:
       - caddy-reverse-proxy
-    privileged: true
-    restart: always
+    env_file:
+      - .env
+    restart: unless-stopped
     working_dir: ${DATA_DIR_WING}
     environment:
       - TZ=${WING_TIMEZONE:-UTC}
