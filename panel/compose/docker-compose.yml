@@ -22,7 +22,6 @@ services:
     labels:
       caddy: ${PANEL_DOMAIN}
       caddy.reverse_proxy: "{{upstreams 80}}"
-      caddy.tls: "internal"
   mysql:
     image: mariadb:10.5
     restart: unless-stopped
