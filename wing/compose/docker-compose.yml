@@ -26,4 +26,4 @@ services:
       - /etc/ssl/certs:/etc/ssl/certs:ro
     labels:
       caddy: ${WING_DOMAIN}
-      caddy.reverse_proxy: "{{upstreams 8080}}"
+      caddy.reverse_proxy: "{{upstreams 443}}"
