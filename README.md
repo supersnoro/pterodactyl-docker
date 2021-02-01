@@ -59,7 +59,7 @@ docker-compose up -d panel
 
 <b>Create a new user</b><br />
  ```
-docker-compose run --rm panel php artisan p:user:make
+docker-compose exec panel php artisan p:user:make
  ```
 Login into the panel using newly created user by navigating to domain you've set in `PANEL_DOMAIN`
 
@@ -94,6 +94,7 @@ In the same tab as the config, there is an option to get a command to fetch the 
 ```
 docker-compose run --rm wing sh -c '[copied command]'
 ```
+Note: the command will have a sudo command in it. Make sure to remove it.
 
 <b>Start wing container<b><br/>
  ```
